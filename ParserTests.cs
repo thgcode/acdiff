@@ -8,6 +8,7 @@ internal static class ParserTests
     {
         if (!condition) throw new Exception(message);
     }
+
     private static void Main()
     {
         List<DiffFile> files = DiffParser.Parse("diff --git a/a.cs b/a.cs\n--- a/a.cs\n+++ b/a.cs\n@@ -1,3 +1,4 @@\n context\n-    old\n+    new\n+\tadded\n tail\ndiff --git a/b b/b\n--- a/b\n+++ b/b\n@@ -0,0 +1 @@\n+hello\n");
