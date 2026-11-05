@@ -3,17 +3,91 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Media;
+using System.Runtime.InteropServices;
+using System.Windows.Automation;
+using System.Windows.Automation.Provider;
 using System.Windows.Forms;
 
 namespace Acdiff
 {
     internal sealed class LiveStatus : Label
     {
+        // These identifiers postdate .NET 4, so use the native UIA event API.
+        private const int LiveSettingPropertyId = 30135;
+        private const int LiveRegionChangedEventId = 20024;
+        private StatusProvider provider;
+
+        [DllImport("UIAutomationCore.dll")]
+        private static extern int UiaRaiseAutomationEvent(IRawElementProviderSimple provider, int eventId);
+
+        private StatusProvider Provider
+        {
+            get
+            {
+                if (provider == null) provider = new StatusProvider(this);
+                return provider;
+            }
+        }
+
         public void Announce(string message)
         {
             Text = message;
             AccessibleName = message;
-            AccessibilityNotifyClients(AccessibleEvents.NameChange, -1);
+            if (IsHandleCreated) UiaRaiseAutomationEvent(Provider, LiveRegionChangedEventId);
+        }
+
+        protected override void WndProc(ref Message message)
+        {
+            const int WmGetObject = 0x003D;
+            const int WmDestroy = 0x0002;
+            if (message.Msg == WmGetObject && message.LParam.ToInt64() == AutomationInteropProvider.RootObjectId)
+            {
+                message.Result = AutomationInteropProvider.ReturnRawElementProvider(Handle, message.WParam, message.LParam, Provider);
+                return;
+            }
+            if (message.Msg == WmDestroy)
+            {
+                AutomationInteropProvider.ReturnRawElementProvider(Handle, IntPtr.Zero, IntPtr.Zero, null);
+            }
+            base.WndProc(ref message);
+        }
+
+        [ComVisible(true)]
+        [ClassInterface(ClassInterfaceType.None)]
+        public sealed class StatusProvider : IRawElementProviderSimple
+        {
+            private readonly LiveStatus owner;
+
+            internal StatusProvider(LiveStatus owner)
+            {
+                this.owner = owner;
+            }
+
+            public ProviderOptions ProviderOptions
+            {
+                get { return ProviderOptions.ServerSideProvider; }
+            }
+
+            public IRawElementProviderSimple HostRawElementProvider
+            {
+                get { return owner.IsHandleCreated ? AutomationInteropProvider.HostProviderFromHandle(owner.Handle) : null; }
+            }
+
+            public object GetPatternProvider(int patternId)
+            {
+                return null;
+            }
+
+            public object GetPropertyValue(int propertyId)
+            {
+                if (propertyId == LiveSettingPropertyId) return 1; // Polite: allow the current line to finish.
+                if (propertyId == AutomationElementIdentifiers.NameProperty.Id) return owner.Text;
+                if (propertyId == AutomationElementIdentifiers.ControlTypeProperty.Id) return ControlType.StatusBar.Id;
+                if (propertyId == AutomationElementIdentifiers.IsControlElementProperty.Id) return true;
+                if (propertyId == AutomationElementIdentifiers.IsContentElementProperty.Id) return true;
+                if (propertyId == AutomationElementIdentifiers.IsKeyboardFocusableProperty.Id) return false;
+                return null;
+            }
         }
     }
 
@@ -180,7 +254,7 @@ namespace Acdiff
                 return;
             }
             DiffLine line = file.Lines[index];
-            string kind = line.Kind == ChangeKind.Addition ? "Addition" : line.Kind == ChangeKind.Deletion ? "Deletion" : line.Kind == ChangeKind.Context ? "Context" : "Diff information";
+            string kind = line.Kind == ChangeKind.Addition ? "Added" : line.Kind == ChangeKind.Deletion ? "Deleted" : line.Kind == ChangeKind.Context ? "Context" : "Diff information";
             string location = line.OldNumber > 0 ? ", old line " + line.OldNumber : "";
             if (line.NewNumber > 0) location += ", new line " + line.NewNumber;
             status.Announce(kind + location + ", " + file.Name);

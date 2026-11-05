@@ -28,9 +28,9 @@ A change block is a consecutive run of additions and deletions. Context or a new
 
 ## Accessibility
 
-The file list, text view, and search field have accessible names. Moving the caret onto a different line updates the status area with addition, deletion, context, or diff information, plus available line numbers and filename. The status area emits an MSAA name-change notification for screen readers. The text itself remains free of spoken change prefixes so its indentation can be read using the screen reader's normal settings.
+The file list, text view, and search field have accessible names. Moving the caret onto a different line updates the status area with Added, Deleted, Context, or Diff information, plus available line numbers and filename. The status area is a polite UI Automation live region and raises LiveRegionChanged events for status updates, including added and deleted lines, navigation boundaries, and unsuccessful searches. Live region announcements require Windows 8 or later and a screen reader with UI Automation live region support. These announcements remain enabled when Sound cues is turned off. The text itself remains free of spoken change prefixes so its indentation can be read using the screen reader's normal settings.
 
-Additions play the Windows Asterisk sound; deletions play Exclamation. Toggle these through the Sound cues menu. Sounds depend on the Windows sound scheme and may be silent or identical in a customized scheme. Screen reader announcement behavior depends on its status-change verbosity settings. Validate with your preferred screen reader and indentation settings before relying on announcements.
+Additions play the Windows Asterisk sound; deletions play Exclamation. Toggle these through the Sound cues menu. Sounds depend on the Windows sound scheme and may be silent or identical in a customized scheme. Screen reader announcement behavior depends on its UI Automation and live region settings. Validate with your preferred screen reader and indentation settings before relying on announcements.
 
 ## Verification
 
