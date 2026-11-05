@@ -6,7 +6,7 @@ A small, keyboard accessible Windows application for reading Git and unified dif
 
 Requires Windows with .NET Framework 4 or later. No NuGet packages, SDK, or installer are needed. Run `build.cmd`, then launch `Acdiff.exe`. You can also pass a diff path: `Acdiff.exe "C:\work\changes.patch"`. The executable can be copied by itself to another Windows computer with the framework installed.
 
-The build script uses `%WINDIR%\Microsoft.NET\Framework64\v4.0.30319\csc.exe`, falling back to the 32 bit framework compiler. It builds an AnyCPU Windows executable. The working directory does not need to be `D:\Variados\acdiff`.
+The build script uses `%WINDIR%\Microsoft.NET\Framework64\v4.0.30319\csc.exe`, falling back to the 32 bit framework compiler. It builds an AnyCPU Windows executable.
 
 Generate a patch with `git diff --no-color > changes.diff`, open an existing patch, or load plain text from the clipboard. Files are read as UTF-8 with BOM detection. Git headers, hunk headings, binary notices, and no-newline notices remain visible as diff information. Binary contents and combined merge diffs are not rendered as source changes.
 
