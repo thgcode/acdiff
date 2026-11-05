@@ -37,3 +37,7 @@ Additions play the Windows Asterisk sound; deletions play Exclamation. Toggle th
 Run `test.cmd` for parser regression checks covering multiple Git/unified files, indentation, literal markers, line numbers, zero length ranges, block boundaries, empty input, and binary notices.
 
 For an interactive check, open a patch with additions and deletions, move through it with arrow keys, and check the status and sound on each changed line. Use F2/Shift+F2, switch files, search in both directions, and verify status announcements with NVDA or JAWS. The parser tests do not validate screen reader output.
+
+## License
+
+Licensed under the [MIT License](LICENSE).
