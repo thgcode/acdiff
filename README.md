@@ -2,9 +2,9 @@
 
 A small, keyboard accessible Windows application for reading Git and unified diffs. The read only text view removes exactly one diff marker from source lines, preserving spaces, tabs, and literal plus/minus characters in the code. Change types and old/new line numbers are stored separately from the displayed text.
 
-## Build and run
+## Using
 
-Requires Windows with .NET Framework 4 or later. No NuGet packages, SDK, or installer are needed. Run `build.cmd`, then launch `Acdiff.exe`. You can also pass a diff path: `Acdiff.exe "C:\work\changes.patch"`. The executable can be copied by itself to another Windows computer with the framework installed.
+Requires Windows with .NET Framework 4 or later. No NuGet packages, SDK, or installer are needed. Just download [Acdiff 0.1-alpha](https://github.com/thgcode/acdiff/releases/download/v0.1-alpha/Acdiff.exe) or just run `build.cmd`, then launch `Acdiff.exe`. You can also pass a diff path: `Acdiff.exe "C:\work\changes.patch"`. The executable can be copied by itself to another Windows computer with the framework installed.
 
 The build script uses `%WINDIR%\Microsoft.NET\Framework64\v4.0.30319\csc.exe`, falling back to the 32 bit framework compiler. It builds an AnyCPU Windows executable.
 
